@@ -1,0 +1,30 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/jdbc 
+		http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd">
+     
+    <!-- connect to database -->
+	<bean id="dataSourceJob"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<!-- rupeesafedb.cxfh38dqc37s.ap-southeast-1.rds.amazonaws.com -->
+		<property name="url" value="jdbc:mysql://127.0.0.1:3306/jobsystem?zeroDateTimeBehavior=convertToNull" />
+		<property name="username" value="root" />
+		<property name="password" value="" />
+	</bean>
+	
+	
+   
+	
+	
+	<jdbc:initialize-database data-source="dataSourceJob">
+		<jdbc:script location="/resources/schema-drop-mysql.sql" />
+		<jdbc:script location="/resources/schema-mysql.sql" />
+	</jdbc:initialize-database>
+	
+	
+</beans>
+

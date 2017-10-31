@@ -1,0 +1,137 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+http://www.springframework.org/schema/security
+http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+
+	<global-method-security pre-post-annotations="enabled" />
+	<http pattern="/resources/**" security="none" />
+	<http pattern="/login" security="none" />
+
+	<!-- Merchant Block -->
+	<http pattern="/merchant/**" auto-config="false" create-session="stateless"
+		entry-point-ref="preAuthenticatedProcessingFilterEntryPoint"
+		authentication-manager-ref="merchantAuthenticationManager">
+
+		<intercept-url pattern="/merchant/**" access="ROLE_CREATE" />
+
+		<!-- <custom-filter ref="merchantProcessingFilter" position="PRE_AUTH_FILTER" 
+			/> -->
+
+		<custom-filter ref="merchantTokenProcessingFilter"
+			after="PRE_AUTH_FILTER" />
+	</http>
+
+	<!-- Gateway Block -->
+	<!-- 	<http pattern="/gateway/**" auto-config="false" create-session="stateless"
+		entry-point-ref="gatewayAuthenticationFailurePoint"
+		authentication-manager-ref="merchantAuthenticationManager"
+		access-decision-manager-ref="unanimousBased"> -->
+	<http pattern="/gateway/**" auto-config="false" create-session="stateless"
+		entry-point-ref="gatewayAuthenticationFailurePoint"
+		authentication-manager-ref="merchantAuthenticationManager">
+
+		<intercept-url pattern="/gateway/checkin" access="ROLE_CREATE" />
+		<custom-filter ref="merchantProcessingFilter" position="PRE_AUTH_FILTER" />
+
+	</http>
+
+	<!-- Customer Authentication Block -->
+	<http pattern="/customer/**" auto-config="false" create-session="stateless"
+		entry-point-ref="preAuthenticatedProcessingFilterEntryPoint"
+		authentication-manager-ref="customerAuthenticationManager">
+
+		<custom-filter ref="customerProcessingFilter" position="PRE_AUTH_FILTER" />
+	</http>
+
+	<!-- Bank Authentication Block -->
+	<http pattern="/bank/**" auto-config="false" create-session="stateless"
+		entry-point-ref="preAuthenticatedProcessingFilterEntryPoint"
+		authentication-manager-ref="bankAuthenticationManager">
+
+		<intercept-url pattern="/bank/**" access="ROLE_WRITE" />
+		<custom-filter ref="bankProcessingFilter" position="PRE_AUTH_FILTER" />
+	</http>
+
+	<!-- Entry Point -->
+	<beans:bean id="preAuthenticatedProcessingFilterEntryPoint"	class="com.i2india.security.ForbiddenEntryPoint" />
+
+	<beans:bean id="gatewayAuthenticationFailurePoint" class="com.i2india.security.GatewayFailure" />
+
+	<!-- Bank Authentication -->
+	<!-- Authentication Manager -->
+	<authentication-manager id="bankAuthenticationManager">
+		<authentication-provider ref="userAuthenticationProvider" />
+	</authentication-manager>
+
+	<!-- Bank Authentication filer -->
+	<beans:bean class="com.i2india.security.BankAuthenticationFilter"
+		id="bankProcessingFilter">
+		<beans:property name="authenticationManager" ref="bankAuthenticationManager" />
+	</beans:bean>
+	<!-- Bank Authentication Ends -->
+
+<!-- Merchant authentication mechanism -->
+	<!-- Authentication Manager -->
+	<authentication-manager id="merchantAuthenticationManager">
+		<authentication-provider ref="merchantAuthenticationProvider" />
+		<authentication-provider ref="userAuthenticationProvider" />
+	</authentication-manager>
+
+	<!-- Authentication Provider -->
+	<beans:bean id="merchantAuthenticationProvider"	class="com.i2india.security.MerchantAuthenticationProvider">
+		<beans:property name="userService" ref="userService" />
+	</beans:bean>
+
+	<!-- Merchant Authentication filter -->
+	<beans:bean class="com.i2india.security.MerchantAuthenticationFilter" id="merchantProcessingFilter">
+		<beans:property name="authenticationManager" ref="merchantAuthenticationManager" />
+	</beans:bean>
+
+	<beans:bean class="com.i2india.security.MerchantTokenAuthenticationFilter" id="merchantTokenProcessingFilter">
+		<beans:property name="authenticationManager" ref="merchantAuthenticationManager" />
+	</beans:bean>
+
+	<!-- Merchant Authentication ends -->
+
+	<!-- Customer Authentication Mechanism -->
+	
+	<!-- Authentication Manager -->
+	<authentication-manager id="customerAuthenticationManager" alias="customerAuthentication">
+		<authentication-provider ref="userAuthenticationProvider" />
+		<authentication-provider ref="customerLoginAuthenticationProvider" />
+	</authentication-manager>
+	
+	<!-- Filters -->
+	<beans:bean class="com.i2india.security.CustomerAuthenticationFilter" id="customerProcessingFilter">
+		<beans:property name="authenticationManager" ref="customerAuthenticationManager" />
+	</beans:bean>
+	
+	<!-- Authentication Providers -->
+	<beans:bean id="userAuthenticationProvider"	class="com.i2india.security.TokenAuthenticationProvider">
+		<beans:property name="userService" ref="userService" />
+	</beans:bean>
+	<beans:bean id="customerLoginAuthenticationProvider" class="com.i2india.security.CustomAuthenticationProvider">
+		<beans:property name="userService" ref="userService" />
+	</beans:bean>
+	
+	<!-- CustomerAuthentication ends -->
+
+<!-- 
+	<beans:bean id="unanimousBased"	class="org.springframework.security.access.vote.UnanimousBased">
+		<beans:constructor-arg>
+			<beans:list>
+				<beans:ref bean="roleVoter" />
+				<beans:ref bean="authenticatedVoter" />
+				<beans:ref bean="customVoter" />
+			</beans:list>
+		</beans:constructor-arg>
+	</beans:bean>
+
+	<beans:bean id="customVoter" class="com.i2india.security.CustomVoter" />
+	<beans:bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter" />
+	<beans:bean id="authenticatedVoter"	class="org.springframework.security.access.vote.AuthenticatedVoter" /> -->
+
+</beans:beans>
+

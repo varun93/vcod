@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+    "-//Hibernate/Hibernate Configuration DTD//EN"
+    "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+	<session-factory>
+		<mapping class="com.i2india.Domain.User" />
+		<mapping class="com.i2india.Domain.Consumer" />
+		<mapping class="com.i2india.Domain.Bank" />
+		<mapping class="com.i2india.Domain.Merchant" />
+		<mapping class="com.i2india.Domain.BankContract" />
+		<mapping class="com.i2india.Domain.MerchantAccount" />
+		<mapping class="com.i2india.Domain.MerchantContract" />
+		<mapping class="com.i2india.Domain.MerchantRefundPolicy" />
+		<mapping class="com.i2india.Domain.Transactions" />
+		<mapping class="com.i2india.Domain.Settlement" />
+		<mapping class="com.i2india.Domain.Dispute" />
+		<mapping class="com.i2india.Domain.DisputeComment" />
+		<mapping class="com.i2india.Domain.ConsumerRefund" />
+		<mapping class="com.i2india.Domain.UserRole" />
+		<mapping class="com.i2india.Domain.UserRight" />
+	</session-factory>
+</hibernate-configuration>

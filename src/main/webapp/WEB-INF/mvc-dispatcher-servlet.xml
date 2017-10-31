@@ -1,0 +1,93 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	
+	xmlns:tx="http://www.springframework.org/schema/tx"
+
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:security="http://www.springframework.org/schema/security"
+
+	xmlns:context="http://www.springframework.org/schema/context"
+
+	xmlns:jee="http://www.springframework.org/schema/jee"
+
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+
+       http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+
+       http://www.springframework.org/schema/aop 
+
+       http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+
+       http://www.springframework.org/schema/tx 
+
+       http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+
+       http://www.springframework.org/schema/mvc
+
+       http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+
+       http://www.springframework.org/schema/context
+
+       http://www.springframework.org/schema/context/spring-context-3.2.xsd
+
+       http://www.springframework.org/schema/security
+
+       http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+
+
+
+	<mvc:annotation-driven />
+
+	<context:component-scan
+
+		base-package="com.i2india.Controller,com.i2india.security,com.i2india.Batch,com.i2india.DAO,com.i2india.Service" />
+
+	<security:global-method-security
+
+		pre-post-annotations="enabled">
+
+		<security:expression-handler ref="expressionHandler" />
+
+	</security:global-method-security>
+
+
+
+	<bean id="expressionHandler"
+
+		class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
+
+		<property name="permissionEvaluator" ref="permissionEvaluator" />
+
+	</bean>
+
+
+
+	<bean id="permissionEvaluator" class="com.i2india.security.BasePermissionEvaluator" />
+
+
+
+
+
+	<bean
+
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+
+		<property name="prefix">
+
+			<value>/WEB-INF/views/</value>
+
+		</property>
+
+		<property name="suffix">
+
+			<value>.jsp</value>
+
+		</property>
+
+	</bean>
+
+
+
+</beans>
