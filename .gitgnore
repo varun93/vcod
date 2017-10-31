@@ -11,16 +11,16 @@ Thumbs.db
 # Build Artifacts
 
 .gradle/
-build/
-target/
-bin/
+build/*
+target/*
+bin/*
 dependency-reduced-pom.xml
 
 # Eclipse Project Files
 
 .classpath
 .project
-.settings/
+.settings/*
 
 # IntelliJ IDEA Files
 
